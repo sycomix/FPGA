@@ -1,21 +1,32 @@
 module alu
 #(
     parameter WORD_SIZE = 32
+,   parameter ADDRES    = $clog2(WORD_SIZE)
 )
 (
-	input [5:0]             opcode
-	// For instruction R-type
-,	input [4:0]             rtype_rs
-,	input [4:0]             rtype_rt
-,	input [4:0]             rtype_rd
-,	input [4:0]             rtype_shamt
-,	input [5:0]             rtype_funct
-	// For instruction I-type
-,	input [4:0]             itype_rs
-,	input [4:0]             itype_rt
-,	input [15:0]            itype_immediate
-	// For instruction J-type
-,	input [25:0]            jtype_addres
+    input [5:0]                opcode
+    // For instruction R-type
+,   input [4:0]                rtype_rs
+,   input [4:0]                rtype_rt
+,   input [4:0]                rtype_rd
+,   input [4:0]                rtype_shamt
+,   input [5:0]                rtype_funct
+    // For instruction I-type
+,   input [4:0]                itype_rs
+,   input [4:0]                itype_rt
+,   input [15:0]               itype_immediate
+    // For instruction J-type
+,   input [25:0]               jtype_addres
+,   output reg [WORD_SIZE-1:0] pc_next
+,   output reg                 signal_we_register
+,   output reg                 signal_we_memory
+,   output reg [ADDRES-1:0]    addres_reg_1
+,   output reg [ADDRES-1:0]    addres_reg_2
+,   output reg [ADDRES-1:0]    addres_write_register
+,   output reg [WORD_SIZE-1:0] data_write_register
+
+,   output reg [WORD_SIZE-1:0] addres_write_memory
+,   output reg [WORD_SIZE-1:0] data_write_memory
 );
 
 localparam INSTRUCTION_OPCODE_RTYPE = 6'b000_000;
@@ -63,7 +74,6 @@ localparam INSTRUCTION_LWC1_ITYPE   = 6'b110_001;
 localparam INSTRUCTION_LWC2         = 6'b110_010;
 localparam INSTRUCTION_PREF         = 6'b110_011;
 localparam INSTRUCTION_TEQ          = 6'b110_100;
-localparam INSTRUCTION_TEQ          = 6'b110_100;
 localparam INSTRUCTION_LDE1_ITYPE   = 6'b110_001;
 localparam INSTRUCTION_LDE2         = 6'b110_010;
 //localparam INSTRUCTION_           = 6'b110_111;
@@ -76,4 +86,19 @@ localparam INSTRUCTION_SDC1_ITYPE   = 6'b111_101;
 localparam INSTRUCTION_SDC1         = 6'b111_110;
 //localparam INSTRUCTION_           = 6'b111_111;
 
+always @* begin
+    pc_next <= pc_next + 4;
+    signal_we_register <= 0;
+    signal_we_memory <= 0;
+
+    addres_reg_1          <= 5'b00000;
+    addres_reg_2          <= 5'b00000;
+    addres_write_register <= 5'b00000;
+    data_write_register   <= 32'h00000000;
+    addres_write_memory   <= 32'h00000000;
+    data_write_memory     <= 32'h00000000;
+
+
+
+end
 endmodule

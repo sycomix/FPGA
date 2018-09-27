@@ -4,11 +4,11 @@ module mips
 )
 (
     input                   clk
-, 	input					rst
+,   input                   rst
 );
 
 // Proccess counter
-reg   [WORD_SIZE-1:0] pc_next;
+wire  [WORD_SIZE-1:0] pc_next;
 wire  [WORD_SIZE-1:0] pc;
 pc #(.WORD_SIZE( WORD_SIZE )) pc_sample
 ( 
@@ -28,22 +28,36 @@ instruction_memor #(.WORD_SIZE( WORD_SIZE )) instruction_memor_sample
 
 // Register file
 localparam ADDRES = $clog2(WORD_SIZE);
-reg  [ADDRES-1:0]       addres_reg_1;
-reg  [ADDRES-1:0]       addres_reg_2;
+wire [ADDRES-1:0]       addres_reg_1;
+wire [ADDRES-1:0]       addres_reg_2;
 wire [WORD_SIZE-1:0]    data_reg_1;
 wire [WORD_SIZE-1:0]    data_reg_2;
-reg                     signal_we;
-reg  [ADDRES-1:0]       addres_write;
-reg  [WORD_SIZE-1:0]    data_write;
+wire                    signal_we_register;
+wire [ADDRES-1:0]       addres_write_register;
+wire [WORD_SIZE-1:0]    data_write_register;
 register_file #(.WORD_SIZE( WORD_SIZE )) register_file_sample
 ( .clk(clk)
 , .addres_reg_1(addres_reg_1)
 , .addres_reg_2(addres_reg_2)
 , .data_reg_1(data_reg_1)
 , .data_reg_2(data_reg_2)
-, .signal_we(signal_we)
-, .addres_write(addres_write)
-, .data_write(data_write)
+, .signal_we(signal_we_register)
+, .addres_write(addres_write_register)
+, .data_write(data_write_register)
+);
+
+// Data memory
+wire [WORD_SIZE-1:0]    data_ram;
+wire                    signal_we_memory;
+wire  [WORD_SIZE-1:0]   addres_write_memory;
+wire  [WORD_SIZE-1:0]   data_write_memory;
+
+data_memory #(.WORD_SIZE( WORD_SIZE )) data_memory_sample
+( .clk(clk)
+, .data_ram(data_ram)
+, .signal_we(signal_we_memory)
+, .addres_write(addres_write_memory)
+, .data_write(data_write_memory)
 );
 
 // Instruction Decode
@@ -73,6 +87,29 @@ instruction_decode #(.WORD_SIZE( WORD_SIZE )) instruction_decode_sample
 );
 
 // ALU
+
+alu #(.WORD_SIZE( WORD_SIZE )) alu_sample
+( 
+  .opcode(opcode)
+, .rtype_rs(rtype_rs)
+, .rtype_rt(rtype_rt)
+, .rtype_rd(rtype_rd)
+, .rtype_shamt(rtype_shamt)
+, .rtype_funct(rtype_funct)
+, .itype_rs(itype_rs)
+, .itype_rt(itype_rt)
+, .itype_immediate(itype_immediate)
+, .jtype_addres(jtype_addres)
+, .pc_next(pc_next)
+, .signal_we_register(signal_we_register)
+, .signal_we_memory(signal_we_memory)
+, .addres_reg_1(addres_reg_1)
+, .addres_reg_2(addres_reg_2)
+, .addres_write_register(addres_write_register)
+, .data_write_register(data_write_register)
+, .addres_write_memory(addres_write_memory)
+, .data_write_memory(data_write_memory)
+);
 
 
 endmodule
