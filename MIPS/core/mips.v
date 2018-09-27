@@ -111,6 +111,7 @@ alu #(.WORD_SIZE( WORD_SIZE )) alu_sample
 , .data_write_register(data_write_register)
 , .addres_write_memory(addres_write_memory)
 , .data_write_memory(data_write_memory)
+, .data_ram(data_ram)
 );
 
 

@@ -30,6 +30,7 @@ module alu
 
 ,   output reg [WORD_SIZE-1:0] addres_write_memory
 ,   output reg [WORD_SIZE-1:0] data_write_memory
+,   input      [WORD_SIZE-1:0] data_ram
 );
 
 localparam INSTRUCTION_OPCODE_RTYPE = 6'b000_000;
@@ -105,23 +106,39 @@ always @* begin
         INSTRUCTION_OPCODE_RTYPE: begin
             case (rtype_funct)
                 INSTRUCTION_ADD_RTYPE: begin
-                    addres_reg_1 = rtype_rs;
-                    addres_reg_2 = rtype_rt;
-                    addres_write_register = rtype_rd;
-                    data_write_register = data_reg_1 + data_reg_2;
-                    signal_we_register = 1;
+                    addres_reg_1 <= rtype_rs;
+                    addres_reg_2 <= rtype_rt;
+                    addres_write_register <= rtype_rd;
+                    data_write_register <= data_reg_1 + data_reg_2;
+                    signal_we_register <= 1;
                 end
                 INSTRUCTION_SUB_RTYPE: begin
-                    addres_reg_1 = rtype_rs;
-                    addres_reg_2 = rtype_rt;
-                    addres_write_register = rtype_rd;
-                    data_write_register = data_reg_1 - data_reg_2;
-                    signal_we_register = 1;
+                    addres_reg_1 <= rtype_rs;
+                    addres_reg_2 <= rtype_rt;
+                    addres_write_register <= rtype_rd;
+                    data_write_register <= data_reg_1 - data_reg_2;
+                    signal_we_register <= 1;
                 end
             endcase
         end
+        INSTRUCTION_LW_ITYPE: begin
+            addres_reg_1 <= itype_rs;
+            addres_write_memory <= data_reg_1 + itype_immediate;
+            addres_write_register <= itype_rt;
+            data_write_register <= data_ram;
+            signal_we_register <= 1;
+        end
+        INSTRUCTION_ADDI_ITYPE: begin
+            addres_reg_1 <= itype_rs;
+            addres_write_register <= itype_rt;
+            data_write_register <= data_reg_1 + itype_immediate;
+            signal_we_register <= 1;
+        end
+        INSTRUCTION_OPCODE_JTYPE: begin
+            pc_next <= jtype_addres;
+        end
     endcase
 
-
+// make mips_compile && make mips_vvp
 end
 endmodule
