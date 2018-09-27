@@ -138,7 +138,5 @@ always @* begin
             pc_next <= jtype_addres;
         end
     endcase
-
-// make mips_compile && make mips_vvp
 end
 endmodule
