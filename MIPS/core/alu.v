@@ -17,6 +17,9 @@ module alu
 ,   input [15:0]               itype_immediate
     // For instruction J-type
 ,   input [25:0]               jtype_addres
+,   input      [WORD_SIZE-1:0] data_reg_1
+,   input      [WORD_SIZE-1:0] data_reg_2
+,   input      [WORD_SIZE-1:0] pc
 ,   output reg [WORD_SIZE-1:0] pc_next
 ,   output reg                 signal_we_register
 ,   output reg                 signal_we_memory
@@ -53,9 +56,9 @@ localparam INSTRUCTION_MULT         = 6'b011_000;
 localparam INSTRUCTION_MULTU        = 6'b011_001;
 localparam INSTRUCTION_DIV          = 6'b011_010;
 localparam INSTRUCTION_DIVU         = 6'b011_011;
-localparam INSTRUCTION_LB           = 6'b100_000;
+localparam INSTRUCTION_ADD_RTYPE    = 6'b100_000;
 localparam INSTRUCTION_LH           = 6'b100_001;
-localparam INSTRUCTION_LWL          = 6'b100_010;
+localparam INSTRUCTION_SUB_RTYPE    = 6'b100_010;
 localparam INSTRUCTION_LW_ITYPE     = 6'b100_011;
 localparam INSTRUCTION_LBU_ITYPE    = 6'b100_100;
 localparam INSTRUCTION_LHU_ITYPE    = 6'b100_101;
@@ -87,7 +90,7 @@ localparam INSTRUCTION_SDC1         = 6'b111_110;
 //localparam INSTRUCTION_           = 6'b111_111;
 
 always @* begin
-    pc_next <= pc_next + 4;
+    pc_next <= pc + 4;
     signal_we_register <= 0;
     signal_we_memory <= 0;
 
@@ -98,6 +101,26 @@ always @* begin
     addres_write_memory   <= 32'h00000000;
     data_write_memory     <= 32'h00000000;
 
+    case (opcode)
+        INSTRUCTION_OPCODE_RTYPE: begin
+            case (rtype_funct)
+                INSTRUCTION_ADD_RTYPE: begin
+                    addres_reg_1 = rtype_rs;
+                    addres_reg_2 = rtype_rt;
+                    addres_write_register = rtype_rd;
+                    data_write_register = data_reg_1 + data_reg_2;
+                    signal_we_register = 1;
+                end
+                INSTRUCTION_SUB_RTYPE: begin
+                    addres_reg_1 = rtype_rs;
+                    addres_reg_2 = rtype_rt;
+                    addres_write_register = rtype_rd;
+                    data_write_register = data_reg_1 - data_reg_2;
+                    signal_we_register = 1;
+                end
+            endcase
+        end
+    endcase
 
 
 end

@@ -28,12 +28,12 @@ initial begin
 
   
   
-  $finish;
+  repeat(10) @(posedge clk); $finish;
 end
 
 initial begin
   $dumpfile("mips_tb.vcd");
-   $dumpvars(-1, mips_tb);
+  $dumpvars(-1, mips_tb);
 end
 
 endmodule

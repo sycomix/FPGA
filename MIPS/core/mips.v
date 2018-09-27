@@ -87,7 +87,6 @@ instruction_decode #(.WORD_SIZE( WORD_SIZE )) instruction_decode_sample
 );
 
 // ALU
-
 alu #(.WORD_SIZE( WORD_SIZE )) alu_sample
 ( 
   .opcode(opcode)
@@ -100,6 +99,9 @@ alu #(.WORD_SIZE( WORD_SIZE )) alu_sample
 , .itype_rt(itype_rt)
 , .itype_immediate(itype_immediate)
 , .jtype_addres(jtype_addres)
+, .data_reg_1(data_reg_1)
+, .data_reg_2(data_reg_2)
+, .pc(pc)
 , .pc_next(pc_next)
 , .signal_we_register(signal_we_register)
 , .signal_we_memory(signal_we_memory)
