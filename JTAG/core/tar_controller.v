@@ -1,13 +1,25 @@
 module tar_controller
 (
-    input   TDI
-,   input   TDO
-,   input   TMS
-,   input   TCK
-,   input   TRST
+    // Jtag interface
+    input      TMS
+,   input      TCK
+,   input      TRST
+    // Instruction registre interface
+,   output reg UPDATEIR
+,   output reg CLOCKIR
+,   output reg SHIFTIR
+    // Test data register interface
+,   output reg UPDATEDR
+,   output reg CLOCKDR
+,   output reg SHIFTDR
+,   output reg TAP_rst
+,   output reg SELECT
+,   output     invTCK
+,   output reg ENABLE
 );
 
-// TAP controller state diagram / Specifications
+assign invTCK = ~TCK;
+
 reg [3:0] state;
 localparam STATE_TEST_LOGIC_RESET = 4'b0000;
 localparam STATE_RUN_TEST_IDLE    = 4'b0001;
@@ -94,6 +106,7 @@ always @(posedge TCK) begin
             if (TMS) begin state <= STATE_SELECT_DR_SCAN;   end
             else     begin state <= STATE_RUN_TEST_IDLE;    end
         end
+        default:           state <= STATE_TEST_LOGIC_RESET;
     endcase
 end
 

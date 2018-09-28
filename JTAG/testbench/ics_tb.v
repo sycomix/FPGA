@@ -1,15 +1,19 @@
 `timescale 1 ns / 1 ns
-module tar_controller_tb();
+module ics_tb();
 
-reg TMS;
-reg TCK;
-reg TRST;
+reg  TMS;
+reg  TCK;
+reg  TRST;
+reg  TDI;
+wire TDO;
 
-tar_controller tar_controller_sample
+ics ics_sample
 ( 
   .TMS(TMS)
 , .TCK(TCK)
 , .TRST(TRST)
+, .TDI(TDI)
+, .TDO(TDO)
 );
 
 always begin
@@ -17,9 +21,9 @@ always begin
 end
 
 initial begin
-   TCK <= 0; TMS = 0; @(posedge TCK);
-   TRST <= 1;          @(posedge TCK);
-   TRST <= 0;          @(posedge TCK);
+   TCK <= 0; TMS = 0; TRST <= 0; @(posedge TCK);
+   TRST <= 1;                    @(posedge TCK);
+   TRST <= 0;                    @(posedge TCK);
 end
 
 initial begin
@@ -33,8 +37,8 @@ initial begin
 end
 
 initial begin
-  $dumpfile("tar_controller_tb.vcd");
-  $dumpvars(-1, tar_controller_tb);
+  $dumpfile("ics_tb.vcd");
+  $dumpvars(-1, ics_tb);
 end
 
 endmodule

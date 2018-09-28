@@ -1,7 +1,7 @@
 FILE_tar_controller = ../core/tar_controller.v ../testbench/tar_controller_tb.v
 FILE_state_decoder = ../core/state_decoder.v ../testbench/state_decoder_tb.v
 FILE_core_logic = ../core/tar_controller.v ../core/state_decoder.v ../core/core_logic.v ../core/top_module.v ../core/debugging.v ../testbench/core_logic_tb.v
-FILE_top_module = ../core/top_module.v ../testbench/top_module_tb.v
+FILE_ics = ../core/ics.v ../core/tar_controller.v ../core/ir.v ../core/dr.v ../testbench/ics_tb.v
 FILE_debugging = ../core/debugging.v ../testbench/debugging_tb.v
 
 tar_controller_compile:
@@ -31,15 +31,6 @@ core_logic_vvp:
 core_logic_gtk:
 	gtkwave core_logic_tb.vcd
 
-top_module_compile:
-	iverilog -o top_module $(FILE_top_module)
-
-top_module_vvp:
-	vvp top_module
-
-top_module_gtk:
-	gtkwave top_module_tb.vcd
-
 debugging_compile:
 	iverilog -o debugging $(FILE_debugging)
 
@@ -48,4 +39,13 @@ debugging_vvp:
 
 debugging_gtk:
 	gtkwave debugging_tb.vcd
+
+ics_compile:
+	iverilog -o ics $(FILE_ics)
+
+ics_vvp:
+	vvp ics
+
+ics_gtk:
+	gtkwave ics_tb.vcd
 

@@ -1,15 +1,18 @@
 vlib work
 
+vlog ../../core/ics.v
 vlog ../../core/tar_controller.v
-vlog ../../testbench/tar_controller_tb.v
+vlog ../../core/ir.v
+vlog ../../core/dr.v
+vlog ../../testbench/ics_tb.v
 
-vsim -novopt work.tar_controller_tb
+vsim -novopt work.ics_tb
 
-add wave -radix bin sim:/tar_controller_tb/TCK
-add wave -radix bin sim:/tar_controller_tb/TDO
-add wave -radix bin sim:/tar_controller_tb/TDI
-add wave -radix bin sim:/tar_controller_tb/TMS
-add wave -radix bin sim:/tar_controller_tb/TRST
+add wave -radix bin sim:/ics_tb/TCK
+add wave -radix bin sim:/ics_tb/TMS
+add wave -radix bin sim:/ics_tb/TRST
+add wave -radix bin sim:/ics_tb/TDI
+add wave -radix bin sim:/ics_tb/TDO
 
 run -all
 
