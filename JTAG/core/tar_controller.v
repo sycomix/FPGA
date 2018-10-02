@@ -21,22 +21,23 @@ module tar_controller
 assign invTCK = ~TCK;
 
 reg [3:0] state;
-localparam STATE_TEST_LOGIC_RESET = 4'b0000;
-localparam STATE_RUN_TEST_IDLE    = 4'b0001;
-localparam STATE_SELECT_DR_SCAN   = 4'b0010;
-localparam STATE_CAPTURE_DR       = 4'b0011;
-localparam STATE_SHIFT_DR         = 4'b0100;
-localparam STATE_EXIT1_DR         = 4'b0101;
-localparam STATE_PAUSE_DR         = 4'b0110;
-localparam STATE_EXIT2_DR         = 4'b0111;
-localparam STATE_UPDATE_DR        = 4'b1000;
-localparam STATE_SELECT_IR_SCAN   = 4'b1001;
-localparam STATE_CAPTURE_IR       = 4'b1010;
-localparam STATE_SHIFT_IR         = 4'b1011;
-localparam STATE_EXIT1_IR         = 4'b1100;
-localparam STATE_PAUSE_IR         = 4'b1101;
-localparam STATE_EXIT2_IR         = 4'b1110;
-localparam STATE_UPDATE_IR        = 4'b1111;
+// State assignments for example TAP controller
+localparam STATE_TEST_LOGIC_RESET = 4'hF;
+localparam STATE_RUN_TEST_IDLE    = 4'hC;
+localparam STATE_SELECT_DR_SCAN   = 4'h7;
+localparam STATE_CAPTURE_DR       = 4'h6;
+localparam STATE_SHIFT_DR         = 4'h2;
+localparam STATE_EXIT1_DR         = 4'h1;
+localparam STATE_PAUSE_DR         = 4'h3;
+localparam STATE_EXIT2_DR         = 4'h0;
+localparam STATE_UPDATE_DR        = 4'h5;
+localparam STATE_SELECT_IR_SCAN   = 4'h4;
+localparam STATE_CAPTURE_IR       = 4'hE;
+localparam STATE_SHIFT_IR         = 4'hA;
+localparam STATE_EXIT1_IR         = 4'h9;
+localparam STATE_PAUSE_IR         = 4'hB;
+localparam STATE_EXIT2_IR         = 4'h8;
+localparam STATE_UPDATE_IR        = 4'hD;
 
 always @(negedge TRST) begin
     state <= STATE_TEST_LOGIC_RESET;
@@ -107,6 +108,25 @@ always @(posedge TCK) begin
             else     begin state <= STATE_RUN_TEST_IDLE;    end
         end
         default:           state <= STATE_TEST_LOGIC_RESET;
+    endcase
+end
+
+always @(posedge TCK) begin
+
+    UPDATEIR <= 1'b0;
+    CLOCKIR  <= 1'b0;
+    SHIFTIR  <= 1'b0;
+    UPDATEDR <= 1'b0;
+    CLOCKDR  <= 1'b0;
+    SHIFTDR  <= 1'b0;
+
+    case(state)
+        STATE_UPDATE_IR:begin UPDATEIR <= 1'b1; end
+        STATE_SHIFT_IR: begin SHIFTIR  <= 1'b1; end
+        //STATE_UPDATE_IR:begin UPDATEIR <= 1'b1; end
+        STATE_UPDATE_DR:begin UPDATEDR <= 1'b1; end
+        STATE_SHIFT_DR: begin SHIFTDR  <= 1'b1; end
+        //STATE_UPDATE_IR:begin UPDATEIR <= 1'b1; end
     endcase
 end
 
