@@ -27,21 +27,21 @@ localparam STATE_PAUSE_IR         = 4'hB;
 localparam STATE_EXIT2_IR         = 4'h8;
 localparam STATE_UPDATE_IR        = 4'hD;
 
-localparam BYPASS   = 4'h0;
-localparam SAMPLE   = 4'h1;
-localparam PRELOAD  = 4'h2;
-localparam EXTEST   = 4'h3;
-localparam INTEST   = 4'h4;
-localparam RUNBIST  = 4'h5;
-localparam CLAMP    = 4'h6;
-localparam IDCODE   = 4'h7;
-localparam USERCODE = 4'h8;
-localparam HIGHZ    = 4'h9;
+localparam BYPASS   = 4'hF; // Обход тестовой логики
+localparam SAMPLE   = 4'h1; // В стадии Capture загрузка входных данных (Normal -> 0) / PRELOAD
+                            // Данные на стадии Update не попадают на ножки микросхемы
+localparam EXTEST   = 4'h2; // ModeTest -> 1 Передача данных на ножки микроконтроллера
+localparam INTEST   = 4'h3; 
+localparam RUNBIST  = 4'h4; // Внутренняя система самотестирования
+localparam CLAMP    = 4'h5; // На выходах фиксирваонное значение
+localparam IDCODE   = 4'h7; // Индетефикатор производителя
+localparam USERCODE = 4'h8; // Индетефикатор пользователя
+localparam HIGHZ    = 4'h9; // Все выходы микросхемы в высокоомное состояние
 
 always @(posedge CLOCKIR) begin
     case(state)
         STATE_TEST_LOGIC_RESET:begin JTAG_IR <= IDCODE; end
     endcase
-end
+end	
 
 endmodule
