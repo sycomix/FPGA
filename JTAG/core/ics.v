@@ -10,7 +10,7 @@ module ics
 wire TAP_rst;
 wire SELECT;
 wire ENABLE;
-wire invTCK;
+wire iTCK;
 wire UPDATEIR;
 wire CLOCKIR;
 wire SHIFTIR;
@@ -18,6 +18,7 @@ wire UPDATEDR;
 wire CLOCKDR;
 wire SHIFTDR;
 wire [3:0] JTAG_IR;
+wire [3:0] state;
 
 tar_controller test_access_port
 ( 
@@ -27,13 +28,14 @@ tar_controller test_access_port
 , .TAP_rst(TAP_rst)
 , .SELECT(SELECT)
 , .ENABLE(ENABLE)
-, .invTCK(invTCK)
+, .iTCK(iTCK)
 , .UPDATEIR(UPDATEIR)
 , .CLOCKIR(CLOCKIR)
 , .SHIFTIR(SHIFTIR)
 , .UPDATEDR(UPDATEDR)
 , .CLOCKDR(CLOCKDR)
 , .SHIFTDR(SHIFTDR)
+, .state(state)
 );
 
 ir instruction_register
@@ -43,6 +45,7 @@ ir instruction_register
 , .CLOCKIR(CLOCKIR)
 , .SHIFTIR(SHIFTIR)
 , .JTAG_IR(JTAG_IR)
+, .state(state)
 );
 
 dr test_data_register

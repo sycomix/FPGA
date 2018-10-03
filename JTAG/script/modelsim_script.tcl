@@ -3,6 +3,7 @@ vlib work
 vlog ../../core/ics.v
 vlog ../../core/tar_controller.v
 vlog ../../core/ir.v
+vlog ../../core/define.v
 vlog ../../core/dr.v
 vlog ../../testbench/ics_tb.v
 

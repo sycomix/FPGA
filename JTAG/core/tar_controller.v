@@ -6,34 +6,36 @@ module tar_controller
 ,   input      TRST
     // Instruction registre interface
 ,   output reg UPDATEIR
-,   output reg CLOCKIR
+,   output     CLOCKIR
 ,   output reg SHIFTIR
     // Test data register interface
 ,   output reg UPDATEDR
-,   output reg CLOCKDR
+,   output     CLOCKDR
 ,   output reg SHIFTDR
 ,   output reg TAP_rst
 ,   output reg SELECT
-,   output     invTCK
+,   output     iTCK
 ,   output reg ENABLE
+,   output reg [3:0] state
 );
 
-assign invTCK = ~TCK;
+assign iTCK    = ~TCK;
+assign CLOCKIR = ~TCK;
+assign CLOCKDR = ~TCK;
 
-reg [3:0] state;
 // State assignments for example TAP controller
 localparam STATE_TEST_LOGIC_RESET = 4'hF;
 localparam STATE_RUN_TEST_IDLE    = 4'hC;
 localparam STATE_SELECT_DR_SCAN   = 4'h7;
 localparam STATE_CAPTURE_DR       = 4'h6;
-localparam STATE_SHIFT_DR         = 4'h2;
+localparam STATE_SHIFT_DR         = 4'h2; // Загрузка данных
 localparam STATE_EXIT1_DR         = 4'h1;
 localparam STATE_PAUSE_DR         = 4'h3;
 localparam STATE_EXIT2_DR         = 4'h0;
 localparam STATE_UPDATE_DR        = 4'h5;
 localparam STATE_SELECT_IR_SCAN   = 4'h4;
 localparam STATE_CAPTURE_IR       = 4'hE;
-localparam STATE_SHIFT_IR         = 4'hA;
+localparam STATE_SHIFT_IR         = 4'hA; // Загрузка комманд
 localparam STATE_EXIT1_IR         = 4'h9;
 localparam STATE_PAUSE_IR         = 4'hB;
 localparam STATE_EXIT2_IR         = 4'h8;
@@ -114,19 +116,15 @@ end
 always @(posedge TCK) begin
 
     UPDATEIR <= 1'b0;
-    CLOCKIR  <= 1'b0;
     SHIFTIR  <= 1'b0;
     UPDATEDR <= 1'b0;
-    CLOCKDR  <= 1'b0;
     SHIFTDR  <= 1'b0;
 
     case(state)
         STATE_UPDATE_IR:begin UPDATEIR <= 1'b1; end
         STATE_SHIFT_IR: begin SHIFTIR  <= 1'b1; end
-        //STATE_UPDATE_IR:begin UPDATEIR <= 1'b1; end
         STATE_UPDATE_DR:begin UPDATEDR <= 1'b1; end
         STATE_SHIFT_DR: begin SHIFTDR  <= 1'b1; end
-        //STATE_UPDATE_IR:begin UPDATEIR <= 1'b1; end
     endcase
 end
 

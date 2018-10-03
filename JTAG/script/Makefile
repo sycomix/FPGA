@@ -48,4 +48,3 @@ ics_vvp:
 
 ics_gtk:
 	gtkwave ics_tb.vcd
-

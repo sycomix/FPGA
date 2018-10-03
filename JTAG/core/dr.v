@@ -7,5 +7,6 @@ module dr
 );
 
 reg [31:0] device_ID_register = 32'hA1B1C1D1;
+reg bypass;
 
 endmodule
