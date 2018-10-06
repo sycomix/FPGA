@@ -1,0 +1,23 @@
+5M570ZF256C5 Connector A    RaspberryPi
+IO39 - AGPIO35 - E4         GPIO4  - 7    LED1
+IO37 - AGPIO33 - C3         GPIO17 - 11   LED2
+IO35 - AGPIO31 - D2         GPIO27 - 13   LED3
+IO33 - AGPIO29 - E1         GPIO22 - 15   LED4
+IO31 - AGPIO27 - E3         GPIO5  - 29   LED5
+IO27 - AGPIO25 - F2         GPIO6  - 31   LED6
+IO25 - AGPIO23 - G1         GPIO13 - 33   LED7
+IO23 - AGPIO21 - G3         GPIO19 - 35   LED8
+IO21 - AGPIO19 - H2         GPIO26 - 37   USER_PBO & USER_LEDO
+IO19 - AGPIO17 - J1         GPIO21 - 40   USER_PB1 & USER_LED1
+ CLK - H5
+
+Buttons
+USER_PBO  - M9
+USER_PB1  - R3
+
+Leds
+USER_LEDO - R1
+USER_LED1 - P4
+
+Work with RaspberryPi
+192.168.1.78
