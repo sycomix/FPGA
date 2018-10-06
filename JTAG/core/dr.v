@@ -6,8 +6,10 @@ module dr
 ,   input            UPDATEDR
 ,   input            SHIFTDR
 ,   input            CAPTUREDR
+,   input            ENABLE
 ,   output reg [7:0] BSR
 ,   output reg       BSR_TDO
+,   output           CLOCKDR
 ,   input            BYPASS_SELECT
 ,   input            SAMPLE_SELECT
 ,   input            EXTEST_SELECT
@@ -21,8 +23,11 @@ module dr
 
 reg [7:0] device_ID_register = 8'hA1;
 
-always @ (posedge TCK) begin
-    if (IDCODE_SELECT && SHIFTDR) begin
+always @ (posedge CLOCKDR) begin
+    if ( IDCODE_SELECT && SHIFTDR ) begin
+        BSR <= {TDI,BSR[7:1]};
+    end else 
+    if ( EXTEST_SELECT && SHIFTDR ) begin
         BSR <= {TDI,BSR[7:1]};
     end else begin
         BSR <= device_ID_register;
@@ -32,5 +37,7 @@ end
 always @ (negedge TCK) begin
     BSR_TDO <= BSR[0];
 end
+
+assign CLOCKDR = CAPTUREDR | SHIFTDR ? TCK : 1'b1;
 
 endmodule

@@ -8,6 +8,7 @@ module ir
 ,   input            CAPTUREIR
 ,   output reg [3:0] LATCH_JTAG_IR
 ,   output reg       INSTR_TDO
+,   output           CLOCKIR
     //  Instruction register
 ,   output reg       BYPASS_SELECT
 ,   output reg       SAMPLE_SELECT
@@ -33,7 +34,7 @@ localparam IDCODE   = 4'h7; // Индетефикатор производите
 localparam USERCODE = 4'h8; // Индетефикатор пользователя
 localparam HIGHZ    = 4'h9; // Все выходы микросхемы в высокоомное состояние
 
-always @(negedge TCK or posedge rst) begin
+always @(posedge CLOCKIR or posedge rst) begin
     if (rst) begin
         JTAG_IR <= 4'b0000;
     end else if(CAPTUREIR) begin
@@ -80,5 +81,7 @@ always @(LATCH_JTAG_IR) begin
         default:  begin BYPASS_SELECT   <= 1'b1; end
     endcase
 end
+
+assign CLOCKIR = CAPTUREIR | SHIFTIR ? TCK : 1'b1;
 
 endmodule

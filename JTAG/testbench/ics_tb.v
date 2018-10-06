@@ -38,7 +38,7 @@ initial begin
   TMS = 0; @(negedge TCK); // SHIFT_IR <- A (Переходим в состояние)
 
     TDI = 0; TMS = 0; @(negedge TCK); // SHIFT_IR <- A (Передаем бит)
-    TDI = 0; TMS = 0; @(negedge TCK); // SHIFT_IR <- A (Передаем бит)
+    TDI = 1; TMS = 0; @(negedge TCK); // SHIFT_IR <- A (Передаем бит)
     TDI = 0; TMS = 0; @(negedge TCK); // SHIFT_IR <- A (Передаем бит)
     TDI = 0; TMS = 1; @(negedge TCK); // EXIT1_IR <- 9 (Передаем бит)
 
@@ -51,15 +51,16 @@ initial begin
   TMS = 1; @(negedge TCK); // EXIT2_IT <- 8
   TMS = 0; @(negedge TCK); // SHIFT_IR <- A
 
+    TDI = 0; TMS = 0; @(negedge TCK); // SHIFT_IR <- A
     TDI = 1; TMS = 0; @(negedge TCK); // SHIFT_IR <- A
-    TDI = 1; TMS = 0; @(negedge TCK); // SHIFT_IR <- A
-    TDI = 1; TMS = 0; @(negedge TCK); // SHIFT_IR <- A
+    TDI = 0; TMS = 0; @(negedge TCK); // SHIFT_IR <- A
     TDI = 0; TMS = 1; @(negedge TCK); // EXIT1_IR <- 9
-    TDI = 0; TMS = 1; @(negedge TCK); // PAUSE_IR <- B
 
+  TDI = 0; TMS = 1; @(negedge TCK); // PAUSE_IR <- B
   TMS = 0; @(negedge TCK); // Run Test IDLE <- B
   TMS = 0; @(negedge TCK); // Run Test IDLE <- B
   TMS = 0; @(negedge TCK); // Run Test IDLE <- B
+
   // Работа с data, 
   TMS = 1; @(negedge TCK); // Select_DR_Scan <- 7
   TMS = 0; @(negedge TCK); // Capture_DR <- 7
