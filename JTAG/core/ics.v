@@ -21,26 +21,31 @@ module ics
 ,   output     LED8
 );
 
-assign LED1 = SWITCH1 ? CORE_LOGIC_BSR[7] : BSR[7];
-assign LED2 = SWITCH1 ? CORE_LOGIC_BSR[6] : BSR[6];
-assign LED3 = SWITCH1 ? CORE_LOGIC_BSR[5] : BSR[5];
-assign LED4 = SWITCH1 ? CORE_LOGIC_BSR[4] : BSR[4];
-assign LED5 = SWITCH1 ? CORE_LOGIC_BSR[3] : BSR[3];
-assign LED6 = SWITCH1 ? CORE_LOGIC_BSR[2] : BSR[2];
-assign LED7 = SWITCH1 ? CORE_LOGIC_BSR[1] : BSR[1];
-assign LED8 = SWITCH1 ? CORE_LOGIC_BSR[0] : BSR[0];
+assign { LED1
+        ,LED2
+        ,LED3
+        ,LED4
+        ,LED5
+        ,LED6
+        ,LED7
+        ,LED8 
+        } = SWITCH1 ? CORE_LOGIC_DATA[7:0] : BSR[7:0];
 
-wire       TAP_rst;
+wire [7:0] BSR;
+wire [7:0] CORE_LOGIC_DATA;
+
 wire       SELECT;
 wire       ENABLE;
-wire       UPDATEIR;
-wire       SHIFTIR;
-wire       UPDATEDR;
-wire       SHIFTDR;
+wire       TAP_RST;
+
 wire       CAPTUREIR;
+wire       SHIFTIR;
+wire       UPDATEIR;
+
 wire       CAPTUREDR;
+wire       SHIFTDR;
+wire       UPDATEDR;
 wire [3:0] JTAG_IR;
-wire [7:0] INTEST_BSR = { LED1,LED2,LED3,LED4,LED5,LED6,LED7,LED8 };
 
 wire BYPASS_SELECT;
 wire SAMPLE_SELECT;
@@ -55,19 +60,18 @@ wire CLOCKDR;
 wire CLOCKIR;
 
 // TDO
-wire       INSTR_TDO;
-wire [7:0] BSR;
-wire       BSR_TDO;
+wire       ID_REG_TDO;
+wire       USER_REG_TDO;
+wire       INSTR_TDO;     // Вывод инструкции на TDO
+wire       BSR_TDO;       // Вывод на TDO Boundary Scan Chain
 wire       BYPASS_TDO;
-wire       CORE_LOGIC_TDO;
-wire [7:0] CORE_LOGIC_BSR;
 
 tar_controller test_access_port
 ( 
   .TMS(TMS)
 , .TCK(TCK)
 , .TRST(TRST)
-, .TAP_RST(TAP_rst)
+, .TAP_RST(TAP_RST)
 , .SELECT(SELECT)
 , .ENABLE(ENABLE)
 , .UPDATEIR(UPDATEIR)
@@ -82,7 +86,7 @@ ir instruction_register
 (
   .TDI(TDI)
 , .TCK(TCK)
-, .rst(TRST)
+, .TRST(TRST)
 , .UPDATEIR(UPDATEIR)
 , .SHIFTIR(SHIFTIR)
 , .CAPTUREIR(CAPTUREIR)
@@ -102,7 +106,7 @@ ir instruction_register
 
 dr test_data_register
 (
-  .rst(TAP_rst)
+  .TRST(TRST)
 , .TCK(TCK)
 , .TDI(TDI)
 , .BSR(BSR)
@@ -121,14 +125,15 @@ dr test_data_register
 , .HIGHZ_SELECT(HIGHZ_SELECT)
 , .CLOCKDR(CLOCKDR)
 , .BSR_TDO(BSR_TDO)
+, .ID_REG_TDO(ID_REG_TDO)
+, .USER_REG_TDO(USER_REG_TDO)
 );
 
 core_logic core_logic_fib
 (
   .TCK(TCK)
-, .rst(TRST)
-, .CORE_LOGIC_BSR(CORE_LOGIC_BSR)
-, .CORE_LOGIC_TDO(CORE_LOGIC_TDO)
+, .TRST(TRST)
+, .CORE_LOGIC_DATA(CORE_LOGIC_DATA)
 , .SHIFTDR(SHIFTDR)
 );
 
@@ -151,15 +156,18 @@ localparam IDCODE   = 4'h7;
 localparam USERCODE = 4'h8; 
 localparam HIGHZ    = 4'h9; 
 
-always @(BSR_TDO or BYPASS_TDO) begin
-    if (SHIFTIR) begin
-        TDO <= INSTR_TDO;
+always @(ID_REG_TDO or USER_REG_TDO or BSR_TDO or BYPASS_TDO or INSTR_TDO) begin
+    if ( SHIFTIR ) begin
+    // При загрузке новой команды, выводим на TDO команду, 
+    // которая лежала до этого в регистре JTAG_IR
+        TDO <= INSTR_TDO; 
     end else begin
         case(JTAG_IR)
-            IDCODE:   begin TDO <= BSR_TDO;    end
-            EXTEST:   begin TDO <= BSR_TDO;    end
-            BYPASS:   begin TDO <= BYPASS_TDO; end
-            default:  begin TDO <= BYPASS_TDO; end
+            IDCODE:   begin TDO <= ID_REG_TDO;   end
+            USERCODE: begin TDO <= USER_REG_TDO; end
+            EXTEST:   begin TDO <= BSR_TDO;      end
+            BYPASS:   begin TDO <= BYPASS_TDO;   end
+            default:  begin TDO <= BYPASS_TDO;   end
         endcase 
     end
 end

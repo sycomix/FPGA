@@ -145,7 +145,6 @@ assign SELECT   = state == STATE_TEST_LOGIC_RESET
                 | state == STATE_EXIT1_IR
                 | state == STATE_PAUSE_IR
                 | state == STATE_EXIT2_IR
-                | state == STATE_UPDATE_IR
-                | state == STATE_UPDATE_DR;
+                | state == STATE_UPDATE_IR;
 
 endmodule

@@ -1,6 +1,6 @@
 module ir
 (
-    input            rst
+    input            TRST
 ,   input            TDI
 ,   input            TCK
 ,   input            UPDATEIR
@@ -34,8 +34,8 @@ localparam IDCODE   = 4'h7; // Индетефикатор производите
 localparam USERCODE = 4'h8; // Индетефикатор пользователя
 localparam HIGHZ    = 4'h9; // Все выходы микросхемы в высокоомное состояние
 
-always @(posedge CLOCKIR or posedge rst) begin
-    if (rst) begin
+always @(posedge CLOCKIR or posedge TRST) begin
+    if (TRST) begin
         JTAG_IR <= 4'b0000;
     end else if(CAPTUREIR) begin
         JTAG_IR <= 4'b0101;
@@ -48,8 +48,8 @@ always @(negedge TCK) begin
     INSTR_TDO <= JTAG_IR[0];
 end
 
-always @(posedge TCK or posedge rst) begin
-    if (rst) begin
+always @(posedge TCK or posedge TRST) begin
+    if (TRST) begin
         LATCH_JTAG_IR <= IDCODE;
     end else if(UPDATEIR) begin
         LATCH_JTAG_IR <= JTAG_IR;

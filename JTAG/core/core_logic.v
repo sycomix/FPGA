@@ -2,15 +2,14 @@ module core_logic
 (
     input          TCK
 ,   input          SHIFTDR
-,   input          rst
-,   output [7:0]   CORE_LOGIC_BSR
-,   output         CORE_LOGIC_TDO
+,   input          TRST
+,   output [7:0]   CORE_LOGIC_DATA
 );
 
 reg [7:0] previous, current;
 
 always @(posedge TCK) begin
- if ( rst ) begin
+ if ( TRST ) begin
     previous <= 8'h00;
     current  <= 8'h01;
   end else begin
@@ -22,7 +21,6 @@ always @(posedge TCK) begin
 end
 
 //assign CORE_LOGIC_BSR = current;
-assign CORE_LOGIC_BSR = 8'hDD;
-assign CORE_LOGIC_TDO = current[0];
+assign CORE_LOGIC_DATA = 8'hDD;
 
 endmodule
