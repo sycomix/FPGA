@@ -36,9 +36,7 @@ localparam HIGHZ    = 4'h9; // Все выходы микросхемы в вы�
 
 always @(posedge CLOCKIR or posedge TRST) begin
     if (TRST) begin
-        JTAG_IR <= 4'b0000;
-    end else if(CAPTUREIR) begin
-        JTAG_IR <= 4'b0101;
+        JTAG_IR <= BYPASS;
     end else if(SHIFTIR) begin
         JTAG_IR <= {TDI,JTAG_IR[3:1]};
     end

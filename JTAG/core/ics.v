@@ -1,36 +1,24 @@
 module ics
 (
-    input      TMS
-,   input      TCK
-,   input      TRST
-,   input      TDI
-,   output reg TDO
-    //  Switsh
-,   input      SWITCH1    
-,   input      SWITCH2
-,   input      SWITCH3
-,   input      SWITCH4
-    // LED
-,   output     LED1
-,   output     LED2
-,   output     LED3
-,   output     LED4
-,   output     LED5
-,   output     LED6
-,   output     LED7
-,   output     LED8
+    input            TMS
+,   input            TCK
+,   input            TRST
+,   input            TDI
+,   output reg       TDO
+
+    // Input / Output
+,   output     [3:0] IO
 );
 
-assign { LED1
-        ,LED2
-        ,LED3
-        ,LED4
-        ,LED5
-        ,LED6
-        ,LED7
-        ,LED8 
-        } = SWITCH1 ? CORE_LOGIC_DATA[7:0] : BSR[7:0];
+reg [3:0] IO_REGISTER;
 
+always @ (posedge TCK) begin
+    if( UPDATEDR ) IO_REGISTER <= IO_OUT;
+end
+
+assign IO = 1 ? IO_REGISTER : 0;
+
+wire [3:0] IO_OUT;
 wire [7:0] BSR;
 wire [7:0] CORE_LOGIC_DATA;
 
@@ -110,6 +98,8 @@ dr test_data_register
 , .TCK(TCK)
 , .TDI(TDI)
 , .BSR(BSR)
+, .IO_IN(IO_REGISTER)
+, .IO_OUT(IO_OUT)
 , .UPDATEDR(UPDATEDR)
 , .SHIFTDR(SHIFTDR)
 , .CAPTUREDR(CAPTUREDR)
@@ -156,19 +146,30 @@ localparam IDCODE   = 4'h7;
 localparam USERCODE = 4'h8; 
 localparam HIGHZ    = 4'h9; 
 
-always @(ID_REG_TDO or USER_REG_TDO or BSR_TDO or BYPASS_TDO or INSTR_TDO) begin
-    if ( SHIFTIR ) begin
-    // При загрузке новой команды, выводим на TDO команду, 
-    // которая лежала до этого в регистре JTAG_IR
-        TDO <= INSTR_TDO; 
+always @(ID_REG_TDO or USER_REG_TDO or BSR_TDO or BYPASS_TDO or INSTR_TDO or TRST or SHIFTDR or SHIFTIR) begin
+
+    if ( TRST ) begin
+        TDO <= 1'bz;
     end else begin
-        case(JTAG_IR)
-            IDCODE:   begin TDO <= ID_REG_TDO;   end
-            USERCODE: begin TDO <= USER_REG_TDO; end
-            EXTEST:   begin TDO <= BSR_TDO;      end
-            BYPASS:   begin TDO <= BYPASS_TDO;   end
-            default:  begin TDO <= BYPASS_TDO;   end
-        endcase 
+
+        if ( SHIFTDR ) begin
+            case(JTAG_IR)
+                IDCODE:   begin TDO <= ID_REG_TDO;   end
+                USERCODE: begin TDO <= USER_REG_TDO; end
+                EXTEST:   begin TDO <= BSR_TDO;      end
+                BYPASS:   begin TDO <= BYPASS_TDO;   end
+                default:  begin TDO <= BYPASS_TDO;   end
+            endcase 
+        end else 
+
+        if ( SHIFTIR ) begin
+            TDO <= INSTR_TDO; 
+        end 
+        
+        else begin
+            TDO <= 1'bz;
+        end
+
     end
 end
 

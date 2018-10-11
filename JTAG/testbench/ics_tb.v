@@ -52,8 +52,8 @@ initial begin
   TMS = 0; @(negedge TCK); // SHIFT_IR <- A
 
     TDI = 1; TMS = 0; @(negedge TCK); // SHIFT_IR <- A
-    TDI = 1; TMS = 0; @(negedge TCK); // SHIFT_IR <- A
-    TDI = 1; TMS = 0; @(negedge TCK); // SHIFT_IR <- A
+    TDI = 0; TMS = 0; @(negedge TCK); // SHIFT_IR <- A
+    TDI = 0; TMS = 0; @(negedge TCK); // SHIFT_IR <- A
     TDI = 0; TMS = 1; @(negedge TCK); // EXIT1_IR <- 9
 
   TDI = 0; TMS = 1; @(negedge TCK); // PAUSE_IR <- B
