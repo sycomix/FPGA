@@ -171,6 +171,8 @@ always @(ID_REG_TDO or USER_REG_TDO or BSR_TDO or BYPASS_TDO or INSTR_TDO or TRS
                 IDCODE:   begin TDO <= ID_REG_TDO;   end
                 USERCODE: begin TDO <= USER_REG_TDO; end
                 EXTEST:   begin TDO <= BSR_TDO;      end
+                INTEST:   begin TDO <= BSR_TDO;      end
+                SAMPLE:   begin TDO <= BSR_TDO;      end
                 BYPASS:   begin TDO <= BYPASS_TDO;   end
                 default:  begin TDO <= BYPASS_TDO;   end
             endcase 
