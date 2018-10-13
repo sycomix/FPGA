@@ -10,17 +10,15 @@ module ics
 ,   output     [3:0] IO
 );
 
+assign IO = !SAMPLE_SELECT ? IO_REGISTER : IO_CORE_LOGIC;
+
 reg [3:0] IO_REGISTER;
+reg [3:0] IO_CORE;
 
-always @ (posedge TCK) begin
-    if( UPDATEDR ) IO_REGISTER <= IO_OUT;
-end
-
-assign IO = 1 ? IO_REGISTER : 0;
-
-wire [3:0] IO_OUT;
+wire [3:0] IO_REGISTER_OUT;
+wire [3:0] IO_CORE_OUT;
+wire [3:0] IO_CORE_LOGIC;
 wire [7:0] BSR;
-wire [7:0] CORE_LOGIC_DATA;
 
 wire       SELECT;
 wire       ENABLE;
@@ -29,6 +27,8 @@ wire       TAP_RST;
 wire       CAPTUREIR;
 wire       SHIFTIR;
 wire       UPDATEIR;
+
+wire       EXIT1DR;
 
 wire       CAPTUREDR;
 wire       SHIFTDR;
@@ -50,8 +50,8 @@ wire CLOCKIR;
 // TDO
 wire       ID_REG_TDO;
 wire       USER_REG_TDO;
-wire       INSTR_TDO;     // Вывод инструкции на TDO
-wire       BSR_TDO;       // Вывод на TDO Boundary Scan Chain
+wire       INSTR_TDO;     
+wire       BSR_TDO;       
 wire       BYPASS_TDO;
 
 tar_controller test_access_port
@@ -68,6 +68,7 @@ tar_controller test_access_port
 , .SHIFTDR(SHIFTDR)
 , .CAPTUREIR(CAPTUREIR)
 , .CAPTUREDR(CAPTUREDR)
+, .EXIT1DR(EXIT1DR)
 );
 
 ir instruction_register
@@ -79,15 +80,6 @@ ir instruction_register
 , .SHIFTIR(SHIFTIR)
 , .CAPTUREIR(CAPTUREIR)
 , .LATCH_JTAG_IR(JTAG_IR)
-, .BYPASS_SELECT(BYPASS_SELECT)
-, .SAMPLE_SELECT(SAMPLE_SELECT)
-, .EXTEST_SELECT(EXTEST_SELECT)
-, .INTEST_SELECT(INTEST_SELECT)
-, .RUNBIST_SELECT(RUNBIST_SELECT)
-, .CLAMP_SELECT(CLAMP_SELECT)
-, .IDCODE_SELECT(IDCODE_SELECT)
-, .USERCODE_SELECT(USERCODE_SELECT)
-, .HIGHZ_SELECT(HIGHZ_SELECT)
 , .CLOCKIR(CLOCKIR)
 , .INSTR_TDO(INSTR_TDO)
 );
@@ -98,8 +90,6 @@ dr test_data_register
 , .TCK(TCK)
 , .TDI(TDI)
 , .BSR(BSR)
-, .IO_IN(IO_REGISTER)
-, .IO_OUT(IO_OUT)
 , .UPDATEDR(UPDATEDR)
 , .SHIFTDR(SHIFTDR)
 , .CAPTUREDR(CAPTUREDR)
@@ -117,14 +107,32 @@ dr test_data_register
 , .BSR_TDO(BSR_TDO)
 , .ID_REG_TDO(ID_REG_TDO)
 , .USER_REG_TDO(USER_REG_TDO)
+, .IO_REGISTER(IO_REGISTER)
+, .IO_REGISTER_OUT(IO_REGISTER_OUT)
+, .IO_CORE(IO_CORE)
+, .IO_CORE_OUT(IO_CORE_OUT)
+, .IO_CORE_LOGIC(IO_CORE_LOGIC)
 );
 
-core_logic core_logic_fib
+state_decoder state_decoder_sample
+(
+  .LATCH_JTAG_IR(JTAG_IR)
+, .BYPASS_SELECT(BYPASS_SELECT)
+, .SAMPLE_SELECT(SAMPLE_SELECT)
+, .EXTEST_SELECT(EXTEST_SELECT)
+, .INTEST_SELECT(INTEST_SELECT)
+, .RUNBIST_SELECT(RUNBIST_SELECT)
+, .CLAMP_SELECT(CLAMP_SELECT)
+, .IDCODE_SELECT(IDCODE_SELECT)
+, .USERCODE_SELECT(USERCODE_SELECT)
+, .HIGHZ_SELECT(HIGHZ_SELECT)
+);
+
+core_logic core_logic_01
 (
   .TCK(TCK)
-, .TRST(TRST)
-, .CORE_LOGIC_DATA(CORE_LOGIC_DATA)
-, .SHIFTDR(SHIFTDR)
+, .IO_CORE(IO_CORE)
+, .IO_CORE_LOGIC(IO_CORE_LOGIC)
 );
 
 bypass bypass_tar
@@ -146,13 +154,21 @@ localparam IDCODE   = 4'h7;
 localparam USERCODE = 4'h8; 
 localparam HIGHZ    = 4'h9; 
 
-always @(ID_REG_TDO or USER_REG_TDO or BSR_TDO or BYPASS_TDO or INSTR_TDO or TRST or SHIFTDR or SHIFTIR) begin
+always @ (posedge TCK) begin
+    if( UPDATEDR & (EXTEST_SELECT | SAMPLE_SELECT)) IO_REGISTER <= IO_REGISTER_OUT;
+end
+
+always @ (posedge TCK) begin
+    if( UPDATEDR & (INTEST_SELECT | SAMPLE_SELECT)) IO_CORE     <= IO_CORE_OUT;
+end
+
+always @(ID_REG_TDO or USER_REG_TDO or BSR_TDO or BYPASS_TDO or INSTR_TDO or TRST or SHIFTDR or SHIFTIR or EXIT1DR) begin
 
     if ( TRST ) begin
         TDO <= 1'bz;
     end else begin
 
-        if ( SHIFTDR ) begin
+        if ( SHIFTDR | EXIT1DR ) begin
             case(JTAG_IR)
                 IDCODE:   begin TDO <= ID_REG_TDO;   end
                 USERCODE: begin TDO <= USER_REG_TDO; end

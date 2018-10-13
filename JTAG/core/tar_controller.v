@@ -12,6 +12,8 @@ module tar_controller
 ,   output     UPDATEDR
 ,   output reg SHIFTDR
 ,   output reg CAPTUREDR
+
+,   output     EXIT1DR
 ,   output reg TAP_RST
 ,   output     SELECT
 ,   output     ENABLE
@@ -137,6 +139,8 @@ end
 
 assign UPDATEIR = UPDATEIR_TEMP && (state == STATE_UPDATE_IR);
 assign UPDATEDR = UPDATEDR_TEMP && (state == STATE_UPDATE_DR);
+assign EXIT1DR  = state == STATE_EXIT1_DR;
+
 assign ENABLE   = SHIFTDR | SHIFTIR;
 assign SELECT   = state == STATE_TEST_LOGIC_RESET   
                 | state == STATE_RUN_TEST_IDLE

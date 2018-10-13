@@ -1,26 +1,13 @@
 module core_logic
 (
-    input          TCK
-,   input          SHIFTDR
-,   input          TRST
-,   output [7:0]   CORE_LOGIC_DATA
+    input           TCK
+,   input  [3:0]    IO_CORE
+,   output [3:0]    IO_CORE_LOGIC
 );
 
-reg [7:0] previous, current;
-
-always @(posedge TCK) begin
- if ( TRST ) begin
-    previous <= 8'h00;
-    current  <= 8'h01;
-  end else begin
-    if (!SHIFTDR) begin
-        current <= current + previous;
-        previous <= current;  
-    end
-  end
-end
-
-//assign CORE_LOGIC_BSR = current;
-assign CORE_LOGIC_DATA = 8'hDD;
+assign IO_CORE_LOGIC[0] = IO_CORE[0] & IO_CORE[1];
+assign IO_CORE_LOGIC[1] = IO_CORE[0] | IO_CORE[1];         
+assign IO_CORE_LOGIC[2] = IO_CORE[2] & IO_CORE[3];         
+assign IO_CORE_LOGIC[3] = IO_CORE[2] | IO_CORE[3];         
 
 endmodule
