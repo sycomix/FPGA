@@ -12,8 +12,8 @@ module ics
 
 assign IO = !SAMPLE_SELECT ? IO_REGISTER : IO_CORE_LOGIC;
 
-reg [3:0] IO_REGISTER;
-reg [3:0] IO_CORE;
+reg  [3:0] IO_REGISTER;
+reg  [3:0] IO_CORE;
 
 wire [3:0] IO_REGISTER_OUT;
 wire [3:0] IO_CORE_OUT;
@@ -35,17 +35,17 @@ wire       SHIFTDR;
 wire       UPDATEDR;
 wire [3:0] JTAG_IR;
 
-wire BYPASS_SELECT;
-wire SAMPLE_SELECT;
-wire EXTEST_SELECT;
-wire INTEST_SELECT;
-wire RUNBIST_SELECT;
-wire CLAMP_SELECT;
-wire IDCODE_SELECT;
-wire USERCODE_SELECT;
-wire HIGHZ_SELECT;
-wire CLOCKDR;
-wire CLOCKIR;
+wire       BYPASS_SELECT;
+wire       SAMPLE_SELECT;
+wire       EXTEST_SELECT;
+wire       INTEST_SELECT;
+wire       RUNBIST_SELECT;
+wire       CLAMP_SELECT;
+wire       IDCODE_SELECT;
+wire       USERCODE_SELECT;
+wire       HIGHZ_SELECT;
+wire       CLOCKDR;
+wire       CLOCKIR;
 
 // TDO
 wire       ID_REG_TDO;
@@ -163,11 +163,9 @@ always @ (posedge TCK) begin
 end
 
 always @(ID_REG_TDO or USER_REG_TDO or BSR_TDO or BYPASS_TDO or INSTR_TDO or TRST or SHIFTDR or SHIFTIR or EXIT1DR) begin
-
     if ( TRST ) begin
         TDO <= 1'bz;
     end else begin
-
         if ( SHIFTDR | EXIT1DR ) begin
             case(JTAG_IR)
                 IDCODE:   begin TDO <= ID_REG_TDO;   end
@@ -177,15 +175,12 @@ always @(ID_REG_TDO or USER_REG_TDO or BSR_TDO or BYPASS_TDO or INSTR_TDO or TRS
                 default:  begin TDO <= BYPASS_TDO;   end
             endcase 
         end else 
-
         if ( SHIFTIR ) begin
             TDO <= INSTR_TDO; 
         end 
-        
         else begin
             TDO <= 1'bz;
         end
-
     end
 end
 
