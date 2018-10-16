@@ -64,6 +64,10 @@ task data;
     TMS = 0; @(negedge TCK); // Capture_DR <- 7
     TMS = 0; @(negedge TCK); // Shidt_DR <- 2
 
+      // For LBS
+      TDI = 0; TMS = 0; @(negedge TCK); // Shidt_DR <- 2
+      TDI = 0; TMS = 0; @(negedge TCK); // Shidt_DR <- 2
+
       TDI = data[0]; TMS = 0; @(negedge TCK); // Shidt_DR <- 2
       TDI = data[1]; TMS = 0; @(negedge TCK); // Shidt_DR <- 2
       TDI = data[2]; TMS = 0; @(negedge TCK); // Shidt_DR <- 2

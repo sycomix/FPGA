@@ -18,7 +18,7 @@ reg  [3:0] IO_CORE;
 wire [3:0] IO_REGISTER_OUT;
 wire [3:0] IO_CORE_OUT;
 wire [3:0] IO_CORE_LOGIC;
-wire [7:0] BSR;
+wire [9:0] BSR;
 
 wire       SELECT;
 wire       ENABLE;
