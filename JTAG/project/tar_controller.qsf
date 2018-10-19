@@ -7,13 +7,3 @@ set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
 set_location_assignment PIN_H5 -to TCK
 set_location_assignment PIN_M9 -to TRST
-set_location_assignment PIN_E4 -to LED1
-set_location_assignment PIN_C3 -to LED2
-set_location_assignment PIN_D2 -to LED3
-set_location_assignment PIN_E1 -to LED4
-set_location_assignment PIN_E3 -to LED5
-set_location_assignment PIN_F2 -to LED6
-set_location_assignment PIN_G1 -to LED7
-set_location_assignment PIN_G3 -to LED8
-set_location_assignment PIN_R3 -to SWITCH1
-set_location_assignment PIN_R1 -to LED_BOARD1
