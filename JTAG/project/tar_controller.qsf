@@ -5,5 +5,12 @@ set_global_assignment -name TOP_LEVEL_ENTITY ics
 set_global_assignment -name LAST_QUARTUS_VERSION "16.1.0 Lite Edition"
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
-set_location_assignment PIN_H5 -to TCK
-set_location_assignment PIN_M9 -to TRST
+set_location_assignment PIN_C3 -to TCK
+set_location_assignment PIN_E4 -to TMS
+set_location_assignment PIN_D2 -to TSRT
+set_location_assignment PIN_G1 -to TDI
+set_location_assignment PIN_G2 -to TDO
+set_location_assignment PIN_H1 -to IO[3]
+set_location_assignment PIN_H2 -to IO[2]
+set_location_assignment PIN_J2 -to IO[1]
+set_location_assignment PIN_K1 -to IO[0]

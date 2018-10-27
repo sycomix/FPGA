@@ -2,11 +2,12 @@
 IO39 - AGPIO35 - E4         GPIO4  - 7    TMS
 IO37 - AGPIO33 - C3         GPIO17 - 11   TCK
 IO35 - AGPIO31 - D2         GPIO27 - 13   TSRT
-IO33 - AGPIO29 - E1         GPIO22 - 15   TDI
-IO31 - AGPIO27 - E3         GPIO5  - 29   TDO
-IO27 - AGPIO25 - F2         GPIO6  - 31    
-IO25 - AGPIO23 - G1         GPIO13 - 33    
-IO23 - AGPIO21 - G3         GPIO19 - 35    
+IO26 - AGPIO24 - G2                       TDO
+IO25 - AGPIO23 - G1         GPIO13 - 33   TDI
+IO24 - AGPIO22 - H1			  IO[3]
+IO21 - AGPIO19 - H2			  IO[2]
+IO20 - AGPIO18 - J2			  IO[1]
+IO18 - AGPIO16 - K1                       IO[0]
 IO21 - AGPIO19 - H2         GPIO26 - 37   USER_PBO & USER_LEDO
 IO19 - AGPIO17 - J1         GPIO21 - 40   USER_PB1 & USER_LED1
  CLK - H5

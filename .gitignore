@@ -1,0 +1,9 @@
+*.bak
+*.rpt
+*.done
+*.smsg
+*.summary
+*.jdi
+*.sld
+*.vcd
+*.qws
