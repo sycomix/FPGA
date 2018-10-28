@@ -1,6 +1,6 @@
 module ir
 (
-    input            TRST
+    input            TAP_RST
 ,   input            TDI
 ,   input            TCK
 ,   input            UPDATEIR
@@ -24,8 +24,8 @@ always @(negedge CLOCKIR) begin
     INSTR_TDO <= JTAG_IR[0];
 end
 
-always @(posedge TCK or posedge TRST) begin
-    if ( TRST ) begin
+always @(posedge TCK) begin
+    if ( !TAP_RST ) begin
         LATCH_JTAG_IR <= BYPASS;
     end else 
     if ( UPDATEIR ) begin

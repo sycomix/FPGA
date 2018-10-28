@@ -1,7 +1,7 @@
 module dr
 (
-    input            TRST
-,   input            TCK
+//    input            TRST
+    input            TCK
 ,   input            TDI
 ,   input            ENABLE
 

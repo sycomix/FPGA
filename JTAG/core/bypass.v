@@ -2,15 +2,15 @@ module bypass
 (
     input      TCK
 ,   input      TDI
-,   input      TRST
+,   input      TAP_RST
 ,   input      SHIFTDR
 ,   output reg BYPASS_TDO
 );
 
 reg BYPASS;
 
-always @(posedge TCK or posedge TRST) begin
-    if ( TRST ) begin
+always @(posedge TCK) begin
+    if ( !TAP_RST ) begin
         BYPASS <= 1'b0;
     end else 
     if ( SHIFTDR ) begin

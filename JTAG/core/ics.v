@@ -1,16 +1,26 @@
 module ics
 (
-    input            TMS
-,   input            TCK
-,   input            TRST
-,   input            TDI
-,   output reg       TDO
+    input            TMS       // J18: AB19
+,   input            TCK       // J18: AA21
+,   input            TDI       // J18: AB21
+,   output reg       TDO       // J18: AA19
 
-    // Input / Output
-,   output     [3:0] IO
+,   output     [3:0] IO        // IO[0] - V19 - LD4
+                               // IO[1] - V20 - LD5
+                               // IO[2] - Y22 - LD6
+                               // IO[3] - W21 - LD7
+
+,   output           TMS_LA    // J19: W17
+,   output           TCK_LA    // J19: V17
+,   output           TDI_LA    // J19: W18
+,   output           TDO_LA    // J19: Y18
+
 );
 
-assign IO = !SAMPLE_SELECT ? IO_REGISTER : IO_CORE_LOGIC;
+assign TMS_LA = TMS;
+assign TCK_LA = TCK;
+assign TDI_LA = TDI;
+assign TDO_LA = TDO;
 
 reg  [3:0] IO_REGISTER;
 reg  [3:0] IO_CORE;
@@ -47,7 +57,6 @@ wire       HIGHZ_SELECT;
 wire       CLOCKDR;
 wire       CLOCKIR;
 
-// TDO
 wire       ID_REG_TDO;
 wire       USER_REG_TDO;
 wire       INSTR_TDO;     
@@ -58,7 +67,7 @@ tar_controller test_access_port
 ( 
   .TMS(TMS)
 , .TCK(TCK)
-, .TRST(TRST)
+//, .TRST(TRST)
 , .TAP_RST(TAP_RST)
 , .SELECT(SELECT)
 , .ENABLE(ENABLE)
@@ -75,7 +84,7 @@ ir instruction_register
 (
   .TDI(TDI)
 , .TCK(TCK)
-, .TRST(TRST)
+, .TAP_RST(TAP_RST)
 , .UPDATEIR(UPDATEIR)
 , .SHIFTIR(SHIFTIR)
 , .CAPTUREIR(CAPTUREIR)
@@ -86,8 +95,8 @@ ir instruction_register
 
 dr test_data_register
 (
-  .TRST(TRST)
-, .TCK(TCK)
+//  .TRST(TRST)
+  .TCK(TCK)
 , .TDI(TDI)
 , .BSR(BSR)
 , .UPDATEDR(UPDATEDR)
@@ -138,7 +147,7 @@ core_logic core_logic_01
 bypass bypass_tar
 (
   .TCK(TCK)
-, .TRST(TRST)
+, .TAP_RST(TAP_RST)
 , .TDI(TDI)
 , .SHIFTDR(SHIFTDR)
 , .BYPASS_TDO(BYPASS_TDO)
@@ -162,28 +171,26 @@ always @ (posedge TCK) begin
     if( UPDATEDR & (INTEST_SELECT | SAMPLE_SELECT)) IO_CORE     <= IO_CORE_OUT;
 end
 
-always @(ID_REG_TDO or USER_REG_TDO or BSR_TDO or BYPASS_TDO or INSTR_TDO or TRST or SHIFTDR or SHIFTIR or EXIT1DR) begin
-    if ( TRST ) begin
+always @(ID_REG_TDO or USER_REG_TDO or BSR_TDO or BYPASS_TDO or INSTR_TDO or SHIFTDR or SHIFTIR or EXIT1DR or JTAG_IR) begin
+    if ( SHIFTDR | EXIT1DR ) begin
+        case(JTAG_IR)
+            IDCODE:   begin TDO <= ID_REG_TDO;   end
+            USERCODE: begin TDO <= USER_REG_TDO; end
+            EXTEST:   begin TDO <= BSR_TDO;      end
+            INTEST:   begin TDO <= BSR_TDO;      end
+            SAMPLE:   begin TDO <= BSR_TDO;      end
+            BYPASS:   begin TDO <= BYPASS_TDO;   end
+            default:  begin TDO <= BYPASS_TDO;   end
+        endcase 
+    end else 
+    if ( SHIFTIR ) begin
+        TDO <= INSTR_TDO; 
+    end 
+    else begin
         TDO <= 1'bz;
-    end else begin
-        if ( SHIFTDR | EXIT1DR ) begin
-            case(JTAG_IR)
-                IDCODE:   begin TDO <= ID_REG_TDO;   end
-                USERCODE: begin TDO <= USER_REG_TDO; end
-                EXTEST:   begin TDO <= BSR_TDO;      end
-                INTEST:   begin TDO <= BSR_TDO;      end
-                SAMPLE:   begin TDO <= BSR_TDO;      end
-                BYPASS:   begin TDO <= BYPASS_TDO;   end
-                default:  begin TDO <= BYPASS_TDO;   end
-            endcase 
-        end else 
-        if ( SHIFTIR ) begin
-            TDO <= INSTR_TDO; 
-        end 
-        else begin
-            TDO <= 1'bz;
-        end
     end
 end
+
+assign IO = !SAMPLE_SELECT ? IO_REGISTER : IO_CORE_LOGIC;
 
 endmodule

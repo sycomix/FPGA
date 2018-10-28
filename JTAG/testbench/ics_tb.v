@@ -21,7 +21,7 @@ ics ics_sample
 ( 
   .TMS(TMS)
 , .TCK(TCK)
-, .TRST(TRST)
+//, .TRST(TRST)
 , .TDI(TDI)
 , .TDO(TDO)
 );
