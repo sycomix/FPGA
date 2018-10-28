@@ -21,7 +21,7 @@ module tar_controller
 
 reg UPDATEIR_TEMP;
 reg UPDATEDR_TEMP;
-reg [3:0] state = STATE_TEST_LOGIC_RESET;
+reg [3:0] state;
 
 // State assignments for example TAP controller
 localparam STATE_TEST_LOGIC_RESET = 4'hF;
