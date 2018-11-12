@@ -31,22 +31,22 @@ module ics
 ,   output           TDO_LA    // J18: AB19 : A3
 
 ,   output     [3:0] state     // state[0] -> J15: AB3 : I1+ : 9pin  : A4
-                     // state[1] -> J15: AA6 : I2+ : 13pin : A5
-                     // state[2] -> J15: Y7  : I3+ : 21pin : A6
-                     // state[3] -> J15: AA8 : I4+ : 25pin : A7
+                               // state[1] -> J15: AA6 : I2+ : 13pin : A5
+                               // state[2] -> J15: Y7  : I3+ : 21pin : A6
+                               // state[3] -> J15: AA8 : I4+ : 25pin : A7
                      
 ,   output     [7:0] LEDs      // LEDs[7] : W21 : LED7
-                     // LEDs[6] : Y22 : LED6
-                     // LEDs[5] : V20 : LED5
-                     // LEDs[4] : V19 : LED4
-                     // LEDs[3] : U19 : LED3
-                     // LEDs[2] : U20 : LED2
-                     // LEDs[1] : T19 : LED1
-                     // LEDs[0] : R20 : LED0
+                               // LEDs[6] : Y22 : LED6
+                               // LEDs[5] : V20 : LED5
+                               // LEDs[4] : V19 : LED4
+                               // LEDs[3] : U19 : LED3
+                               // LEDs[2] : U20 : LED2
+                               // LEDs[1] : T19 : LED1
+                               // LEDs[0] : R20 : LED0
 ,   input      [3:0] TUMBLERS  // SW0 : TUMBLERS[0] : V8                     
                                // SW1 : TUMBLERS[1] : U10
-                     // SW2 : TUMBLERS[2] : U8
-                     // SW3 : TUMBLERS[3] : T9
+                               // SW2 : TUMBLERS[2] : U8
+                               // SW3 : TUMBLERS[3] : T9
 
 );
 
