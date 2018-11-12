@@ -1,32 +1,29 @@
 module ir
 (
-    input            TAP_RST
-,   input            TDI
+    input            TDI
 ,   input            TCK
+,   input            TLR
 ,   input            UPDATEIR
 ,   input            SHIFTIR
 ,   input            CAPTUREIR
-,   output reg [3:0] LATCH_JTAG_IR
 ,   output reg       INSTR_TDO
-,   output           CLOCKIR
+,   output reg [3:0] LATCH_JTAG_IR
 );
 
-localparam BYPASS   = 4'hF;
+localparam IDCODE   = 4'h7;
 reg [3:0] JTAG_IR;
 
-assign CLOCKIR = CAPTUREIR | SHIFTIR ? TCK : 1'b1;
-
-always @(posedge CLOCKIR) begin
+always @(posedge TCK) begin
     if( SHIFTIR ) JTAG_IR <= {TDI,JTAG_IR[3:1]};
 end
 
-always @(negedge CLOCKIR) begin
+always @(negedge TCK) begin
     INSTR_TDO <= JTAG_IR[0];
 end
 
 always @(posedge TCK) begin
-    if ( !TAP_RST ) begin
-        LATCH_JTAG_IR <= BYPASS;
+    if ( TLR ) begin
+        LATCH_JTAG_IR <= IDCODE;
     end else 
     if ( UPDATEIR ) begin
         LATCH_JTAG_IR <= JTAG_IR;
