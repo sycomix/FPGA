@@ -95,11 +95,7 @@ initial begin
 
   repeat(5) @(negedge TCK); // Test Logic Reset <- F
 
-  command(BYPASS); data(8'b10000001);
-  command(SAMPLE); data(8'b10100101);
-  command(EXTEST); data(8'b01101111);
-  command(INTEST); data(8'b01101111);
-  command(BYPASS); data(8'b10000001);
+  command(IDCODE); data(8'hAD);
   
   repeat(10) @(posedge TCK); $finish;
 end
