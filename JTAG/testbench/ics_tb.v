@@ -26,14 +26,30 @@ ics ics_sample
 , .TDO(TDO)
 );
 
+reg        clk;
+reg  [3:0] X;
+wire [3:0] Yin;
+
+functional_unit fu
+(
+  .clk(clk)
+, .TLR(TRST)
+, .X(X)
+, .Yin(Yin)
+);
+
 always begin
-   #5  TCK <= ~TCK; // 200MHz
+   #10  TCK <= ~TCK; // 20MHz
+end
+
+always begin
+   #5  clk <= ~clk; // 200MHz
 end
 
 initial begin
-   TCK = 0; TMS = 1; TRST = 0; TDI = 0; @(posedge TCK);
-   TRST = 1;                            @(posedge TCK);
-   TRST = 0;                            @(posedge TCK);
+   TCK = 0; clk = 0; TMS = 1; TRST = 0; TDI = 0; @(posedge TCK);
+   TRST = 1;                                     @(posedge TCK);
+   TRST = 0;                                     @(posedge TCK);
 end  
 
 task command;
@@ -91,13 +107,58 @@ task data;
   end 
 endtask
 
+task assert;
+  input [3:0] a;
+  input [3:0] b;
+  begin
+    if ( !(a === b) ) begin
+      $display("ASSERT FAIL: %h === %h", a, b);
+      $finish(2);
+    end
+  end
+endtask
+
+localparam STATE_0 = 4'b0000; 
+localparam STATE_1 = 4'b0001; 
+localparam STATE_2 = 4'b0010; 
+localparam STATE_3 = 4'b0011;
+localparam STATE_4 = 4'b0100;
+localparam STATE_5 = 4'b0101;
+localparam STATE_6 = 4'b0110;
+localparam STATE_7 = 4'b0111;
+localparam STATE_8 = 4'b1000;
+localparam STATE_9 = 4'b1001;
+localparam STATE_A = 4'b1010;
+localparam STATE_B = 4'b1011;
+localparam STATE_C = 4'b1100;
+localparam STATE_D = 4'b1101;
+localparam STATE_E = 4'b1110;
+localparam STATE_F = 4'b1111;
+
+initial begin
+
+  @(negedge TRST); @(posedge clk); 
+
+  X <= 4'b0010; @(posedge clk); assert(Yin, STATE_1);
+  X <= 4'b0010; @(posedge clk); assert(Yin, STATE_B);
+  X <= 4'b1100; @(posedge clk); assert(Yin, STATE_8);
+  X <= 4'b1111; @(posedge clk); assert(Yin, STATE_B);
+  X <= 4'b1110; @(posedge clk); assert(Yin, STATE_C);
+  X <= 4'b1110; @(posedge clk); assert(Yin, STATE_2);
+  X <= 4'b0000; @(posedge clk); assert(Yin, STATE_9);
+  X <= 4'b0000; @(posedge clk); assert(Yin, STATE_4);
+  X <= 4'b0111; @(posedge clk); assert(Yin, STATE_C);
+  X <= 4'b0010; @(posedge clk); assert(Yin, STATE_E);
+
+end
+
 initial begin
 
   repeat(5) @(negedge TCK); // Test Logic Reset <- F
 
   command(IDCODE); data(8'hAD);
   
-  repeat(10) @(posedge TCK); $finish;
+  repeat(100) @(posedge TCK); $finish;
 end
 
 initial begin
